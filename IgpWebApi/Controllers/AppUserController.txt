@@ -1,0 +1,246 @@
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using IgpDAL;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+
+namespace IgpWebApi.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class AppUserController : ControllerBase
+{
+ 
+    private readonly IgpDbContext _dbctx;
+    private readonly UserManager<IgpUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
+ 
+    private readonly IConfiguration _iconfiguration;
+    private readonly   IJwtAuthManager  _jwtAuthManager;
+    public AppUserController(
+            UserManager<IgpUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IConfiguration configuration,
+
+        IgpDbContext ctx,IConfiguration iconfiguration,IJwtAuthManager jwtAuthManager)
+    {
+        this._dbctx = ctx;
+        this._iconfiguration=iconfiguration;
+        this._jwtAuthManager = jwtAuthManager;
+                
+        _userManager = userManager;
+        _roleManager = roleManager;
+        
+
+    }
+
+
+    private IgpUser GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+
+                return new IgpUser
+                {
+                    UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
+                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
+                    PhoneNumber = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.MobilePhone)?.Value,
+                    Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
+                    Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
+                };
+            }
+            return null;
+        }
+
+    [HttpGet()]
+    public async  Task<ActionResult< IEnumerable<AppUser>>> Get()
+    {
+        var T =  await _dbctx.AppUsers.ToListAsync();
+        return T;
+    }
+
+    [HttpGet("Login")]
+    public async  Task<ActionResult<AppUser>> Login(String surname)
+    {
+        if(!string.IsNullOrEmpty(surname))
+        {
+        var loggedinuser =  await _dbctx.AppUsers.Where( i => i.Surname==surname).FirstAsync();
+        if (loggedinuser != null)
+        {
+         var claims = new []
+         {
+             new Claim( ClaimTypes.NameIdentifier,loggedinuser.Surname),
+             new Claim( ClaimTypes.Email,loggedinuser.email),
+             new Claim( ClaimTypes.MobilePhone,loggedinuser.PhoneNo),
+             new Claim( ClaimTypes.PostalCode,loggedinuser.PostCode),
+             new Claim( ClaimTypes.Role,loggedinuser.PostCode)
+
+         };
+         var token = new JwtSecurityToken
+         (
+             issuer: _iconfiguration["Jwt:Issuer"],
+             audience: _iconfiguration["Jwt:Audience"],
+             claims:claims,
+             expires:DateTime.UtcNow.AddDays(60),
+       
+             signingCredentials: new SigningCredentials(
+                  new  SymmetricSecurityKey(Encoding.UTF8.GetBytes(_iconfiguration["Jwt:Jwtkey"])),
+                       SecurityAlgorithms.HmacSha256));
+             var tokenstring = new JwtSecurityTokenHandler().WriteToken(token);
+            
+             return Ok(tokenstring); 
+
+
+         };
+        }
+
+        return NotFound("Wrong Username ...");
+      
+     }
+
+
+
+    [HttpPost("GetByEmail")]
+    //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles="Admin") ]
+    public  async  Task <ActionResult< IdentityUser>> GetByEmail([FromBody] AUser auser)
+    {
+        var user =  await _jwtAuthManager.Find(auser,_userManager);
+        if (user!=null)
+        {
+            return Ok(user) ;
+        }
+
+        return BadRequest("User Not Found");
+    }
+
+    
+    // [HttpGet("JobsPost")]
+    //  [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme) ]
+    // public   ActionResult< AppUser> GetByEmailIncludeJobsPost(string Email)
+    // {
+    //     var user =   _dbctx.AppUsers.Where( i => i.email==Email).Include(x=>x.JobBoards);
+    //     if (user!=null)
+    //     {
+    //         return Ok(user) ;
+    //     }
+
+    //     return NotFound("User Not Found");
+    // }
+
+    
+    // [HttpPost()]
+    // public   async  Task<IActionResult>  Create([FromBody] AppUser appuser)
+    // {
+    //     var user =   _dbctx.AppUsers.Where( i => i.Email==appuser.Email);
+    //     if (user==null)
+    //     {
+    //        await  _dbctx.AddAsync(appuser);
+    //        await  _dbctx.SaveChangesAsync();
+    //        return Ok(appuser);
+    //     } 
+
+    //    return Ok("User Already Exist");
+    // }
+
+
+    [HttpDelete()]
+    public   async  Task<IActionResult>  Delete(string email)
+    {
+        var user =   _dbctx.AppUsers.Where( i => i.email==email);
+        if (user!=null)
+        {
+            _dbctx.Remove(user);
+           await  _dbctx.SaveChangesAsync();
+           return Ok(" User Removed");
+        } 
+
+       return Ok("User Does Not Exist");
+    }
+
+
+
+
+        [HttpPost]
+        [Route("RegisterUser")]// This must take in several data not just AUSER model
+        public async Task<IActionResult> RegisterUser([FromBody] AUser model)
+        {
+
+            
+            var userExists = await _userManager.FindByEmailAsync(model.email);
+            if (userExists != null)
+                return StatusCode(StatusCodes.Status500InternalServerError,"User already exists!" );
+
+            IgpUser user = new()
+            {
+                Email = model.email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.email
+            };
+            var result = await _userManager.CreateAsync(user, model.password);
+            if (!result.Succeeded)
+            {
+                 var error =string.Empty;
+                   foreach (var err in  result.Errors)
+                   {
+                       error += err.Code+ " : " +err.Description+"  \n";
+                   }
+                   return StatusCode(StatusCodes.Status500InternalServerError,  error+ "User creation failed! Please check user details and try again." );
+
+            }
+             
+            return Ok("User created successfully!" );
+        }
+
+        // [HttpPost]
+        // [Route("register-admin")]
+        // public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        // {
+        //     var userExists = await _userManager.FindByNameAsync(model.Username);
+        //     if (userExists != null)
+        //         return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+
+        //     IdentityUser user = new()
+        //     {
+        //         Email = model.Email,
+        //         SecurityStamp = Guid.NewGuid().ToString(),
+        //         UserName = model.Username
+        //     };
+        //     var result = await _userManager.CreateAsync(user, model.Password);
+        //     if (!result.Succeeded)
+        //         return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+
+        //     if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        //         await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+        //     if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+        //         await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+        //     if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        //     {
+        //         await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        //     }
+        //     if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+        //     {
+        //         await _userManager.AddToRoleAsync(user, UserRoles.User);
+        //     }
+        //     return Ok(new Response { Status = "Success", Message = "User created successfully!" });
+        // }
+
+
+
+
+
+
+
+
+
+
+
+}
