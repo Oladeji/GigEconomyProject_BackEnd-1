@@ -55,6 +55,28 @@ public class TokenController : ControllerBase
       
      }
 
+    [HttpPost("Login")]
+    public async  Task<ActionResult<int>> Login([FromBody ] ILoginDto user)
+    {
+       var loggedinuser = await  _jwtAuthManager.FindIgpUser( user,  _userManager);
+            if (loggedinuser !=null)
+            {
+               var result=  await _jwtAuthManager.GenerateToken(loggedinuser);
+                if( result !=null)  
+                {
+                   return  Ok(  new CustomReturnType { 
+                                code = StatusCodes.Status200OK, 
+                                Usertype=loggedinuser.Usertype.ToString(),
+                                message = "User succesfully Login",
+                                token= result,Username=loggedinuser.Email });
+
+                  //  return Ok(result); 
+                }
+            }
+          return NotFound("User Not Found");
+      
+     }
+
 
 
 }

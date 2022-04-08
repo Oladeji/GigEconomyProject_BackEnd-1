@@ -68,7 +68,7 @@ public class JobBoardController : ControllerBase
     public   async  Task<IActionResult>  Create([FromBody] AJob job)
     {
         var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
-        var jb= await  _jobManager.Create(currentuser,job,_dbctx);
+        var jb= await  _jobManager.Create(currentuser,job);
                 if (jb == -1)
                 {
            

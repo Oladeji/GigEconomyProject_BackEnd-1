@@ -44,8 +44,8 @@ public class JwtAuthManager :IJwtAuthManager
                    // new Claim( ClaimTypes.MobilePhone,loggedinuser.PhoneNo),
                    // new Claim( ClaimTypes.PostalCode,loggedinuser.PostCode),
                   //  new Claim( ClaimTypes.PostalCode,loggedinuser.p),
-                    //  new Claim( ClaimTypes.PostalCode,loggedinuser.),
-                    new Claim( ClaimTypes.Role,loggedinuser.Role)
+                    new Claim( ClaimTypes.Role,loggedinuser.Role.ToString()),
+                    new Claim( "USERTYPE",loggedinuser.Usertype.ToString())
                 };
 
                 foreach (var userRole in userRoles)
@@ -60,7 +60,7 @@ public class JwtAuthManager :IJwtAuthManager
             return  null;
     }
 
-  public async  Task<IgpUser> FindIgpUser(ClientRegisterDto auser,    UserManager<IgpUser> _userManager)
+  public async  Task<IgpUser> FindIgpUser(ILoginDto auser,    UserManager<IgpUser> _userManager)
   {
       
             var loggedinuser = await  _userManager.FindByEmailAsync(auser.Email);

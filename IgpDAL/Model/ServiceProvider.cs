@@ -6,7 +6,7 @@ namespace IgpDAL
 public class  ServiceProvider
 {
   public int  ServiceProviderId {set;get;}
-  public int  ProviderId {set;get;}
+//  public int  ProviderId {set;get;}
   public string Surname {set;get;}
   public string Middlename {set;get;}
   public string Firstname {set;get;}

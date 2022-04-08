@@ -26,4 +26,15 @@ public class Client
   [JsonIgnore]
   public List<JobBoard>? JobBoards { get; set; } 
 }
+
+
+
+public enum TypeOfUser 
+{
+  ADMIN,
+
+  PROVIDER,
+  CLIENT,
+  UNKNOWN
+}
 }

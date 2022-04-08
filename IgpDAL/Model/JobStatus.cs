@@ -9,10 +9,7 @@ namespace IgpDAL
 public class JobStatus
 {
 
-   private static readonly string[] JobStates = new[]
-    {
-        "InProgress", "Completed-Paid", "Completed-NotYetPaid","New"
-    };
+ 
  public int JobStatusId  { get ; set ;}
  public int JobBoardId { get ; set ;}
  public int ProviderId { get ; set ;}
@@ -25,5 +22,14 @@ public class JobStatus
 public Point Location { get; set; } 
 
 public  Invoice Invoice { get; set; }
+public JobState  State{get;set;}= JobState.New;
 }
+
+  public enum JobState
+    {
+        InProgress, 
+        Completed_Paid, 
+        Completed_NotYetPaid,
+        New
+    };
 }

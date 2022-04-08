@@ -8,7 +8,7 @@ public interface IJwtAuthManager
     //public  Task<Tokens>      GenerateToken(IgpUser users,    UserManager<IgpUser> _userManager);
     public  Task<Tokens>      GenerateToken(IgpUser users);//UserManager should be injected somewhere
 
-    public  Task<IgpUser>     FindIgpUser(ClientRegisterDto users,    UserManager<IgpUser> _userManager);
+    public  Task<IgpUser>     FindIgpUser(ILoginDto users,    UserManager<IgpUser> _userManager);
 
 
 }

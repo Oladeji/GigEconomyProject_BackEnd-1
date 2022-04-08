@@ -3,32 +3,42 @@ using Microsoft.EntityFrameworkCore;
 
 public class JobManager : IJobManager
 {
-    public async Task<int> Create(Client user, AJob job, IgpDbContext dbctx)
+      private readonly IgpDbContext _dbctx;
+    public JobManager( IgpDbContext dbctx)
     {
-        await dbctx.JobBoards.AddAsync(new JobBoard{
+        _dbctx=dbctx;
+    }
+
+    public async Task<int> Create(Client user, AJob job)
+    {
+        await _dbctx.JobBoards.AddAsync(new JobBoard{
              JobDescription=job.JobDescription,
              ClientId = user.ClientId
         });
 
-       return await dbctx.SaveChangesAsync();
+       return await _dbctx.SaveChangesAsync();
 
         
     }
 
-    public async Task<int> Delete(JobBoard job,IgpDbContext dbctx)
+    public async Task<int> Delete(JobBoard job)
     {
-           if(job.JobState=="New")
-              dbctx.JobBoards.Remove(job);
+           if(job.State==JobState.New)
+              _dbctx.JobBoards.Remove(job);
            
-           return  await dbctx.SaveChangesAsync();
+           return  await _dbctx.SaveChangesAsync();
 
 
 
     }
 
-    public async Task<JobBoard> Find(Client user, JobBoard job, IgpDbContext dbctx)
+    public async Task<JobBoard> Find(Client user, JobBoard job)
     {
+
+        // JobBoard? jobBoard = await dbctx.JobBoards.Where(u => (u.ClientId == user.ClientId) && (u.JobBoardId == job.JobBoardId)).FirstOrDefaultAsync();
+       // return
+       // jobBoard;
         return 
-        await dbctx.JobBoards.Where(u=> (u.ClientId==user.ClientId) && (u.JobBoardId== job.JobBoardId)).FirstOrDefaultAsync();
+        await _dbctx.JobBoards.Where(u=> (u.ClientId==user.ClientId) && (u.JobBoardId== job.JobBoardId)).FirstOrDefaultAsync();
     }
 }

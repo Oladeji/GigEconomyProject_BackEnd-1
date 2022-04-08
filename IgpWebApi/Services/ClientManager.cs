@@ -33,17 +33,6 @@ public class Clientmanager : IClientManager
 
 
 
-
-      
-      
-    
-     
-      
-      
-
-
-
-
     public async Task<Client> Create(ClientRegisterDto user)
     {
         
@@ -108,7 +97,10 @@ public class Clientmanager : IClientManager
         }
 
         var userExists = await _userManager.FindByEmailAsync(model.Email);
-        if (userExists != null) return new CustomReturnType { code = StatusCodes.Status500InternalServerError, message = "User already exists!" };
+        if (userExists != null) return new CustomReturnType { 
+            code = StatusCodes.Status500InternalServerError,
+            message = "User already exists!" ,Username=model.Email
+            };
 
         IgpUser user = new()
         {
@@ -116,7 +108,7 @@ public class Clientmanager : IClientManager
             SecurityStamp = Guid.NewGuid().ToString(),
             UserName = model.Email,
             UserCode = client.ClientId,
-            Usertype = "CLIENT"
+            Usertype = TypeOfUser.CLIENT
 
 
         };
@@ -135,16 +127,17 @@ public class Clientmanager : IClientManager
             };
         }
         var tokenresult = await _jwtAuthManager.GenerateToken(user);
-        if (tokenresult == null)
-        {
-            throw new Exception(" Problem generation Token");
-        }
+        if (tokenresult == null) {throw new Exception(" Problem generation Token"); }
+       
+            
+       
         return new CustomReturnType
         {
             code = StatusCodes.Status201Created,
             token=tokenresult,
             message = "User created successfully!",
-
+            Usertype = TypeOfUser.CLIENT.ToString(),
+            Username = model.Email
         };
 
     }

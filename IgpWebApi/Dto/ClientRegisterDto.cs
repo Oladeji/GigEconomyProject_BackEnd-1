@@ -1,12 +1,10 @@
 using NetTopologySuite.Geometries;
 
-public class ClientRegisterDto
+public class ClientRegisterDto: ILoginDto
 
 {
-	public string Email { get; set; }
+    public string Email { get; set; }
 	public string Password { get; set; }
-
-
   public string Surname { get; set; }= string.Empty;
   public string Middlename  { get; set; }= string.Empty;
   public string Firstname { get; set; }= string.Empty;
@@ -19,30 +17,6 @@ public class ClientRegisterDto
   public string Country { get; set; }= string.Empty;
   public IFormFile Image { get; set; }
   public string ImageUrl  { get; set; } = string.Empty;
-  public GeolocationDto Location { get; set; } 
-//public Point Location { get; set; } 
-   // public DbGeography Location2 { get; set; }
-	
-}
+  public GeolocationDto Location { get; set; }
+   }
 
-public class ClientRegisterDto2
-
-{
-	public string Email { get; set; }
-	public string Password { get; set; }
-
-
-  //public string Surname { get; set; }= string.Empty;
-  //public string Middlename  { get; set; }= string.Empty;
-  //public string Firstname { get; set; }= string.Empty;
-
-  // public string PhoneNo { get; set; }= string.Empty;
-  // public string PostCode  { get; set; }= string.Empty;
-  // public string HouseNo  { get; set; }= string.Empty;
-  // public string Address { get; set; }= string.Empty;
-  // public string City { get; set; }= string.Empty;
-  // public string Country { get; set; }= string.Empty;
-  public IFormFile Image { get; set; }
- 
-	
-}
