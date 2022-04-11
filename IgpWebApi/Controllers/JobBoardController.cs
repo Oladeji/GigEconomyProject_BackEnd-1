@@ -106,7 +106,7 @@ public class JobBoardController : ControllerBase
     public   async  Task<IActionResult>  IamClient()
     {
 
-
+//var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
        return Ok("Client");
     }
 

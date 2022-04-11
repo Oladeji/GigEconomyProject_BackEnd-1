@@ -98,10 +98,11 @@ public class ClientController : ControllerBase
 
     [HttpGet("SampleGetDistanceBtwPoints")]
     // This must take in several data not just AUSER model
-    public async Task<IActionResult> GetDistance()
+    public  ActionResult GetDistance()
     {
-        var x = _dbctx.Clients.Where(i => i.email == "Akomspatrick7@yahoo.com").First().Location;
-        var y = _dbctx.Clients.Where(i => i.email == "Akomspatrick8@yahoo.com").First().Location;
+        
+        var x = _dbctx.ServiceProviders.Where(i => i.Email == "Akomspatrick7@yahoo.com").First().Location;
+        var y = _dbctx.Clients.Where(i => i.email == "akomspatrick2@yahoo.com").First().Location;
         var distanceInMeters = CalculateDistance.getdistance(x, y);
         return Ok(distanceInMeters);
     }
