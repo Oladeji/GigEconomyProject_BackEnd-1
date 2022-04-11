@@ -13,7 +13,7 @@ namespace IgpWebApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ClientController : ControllerBase
+public class ServiceProviderController : ControllerBase
 {
 
     private readonly IgpDbContext _dbctx;
@@ -22,8 +22,9 @@ public class ClientController : ControllerBase
 
     private readonly IConfiguration _iconfiguration;
     private readonly IJwtAuthManager _jwtAuthManager;
-    private readonly IClientManager _clientManager;
-    public ClientController(
+    //private readonly IClientManager _clientManager;
+    private readonly IServiceProviderManager _serviceProviderManager;
+    public ServiceProviderController(
             UserManager<IgpUser> userManager,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
@@ -31,7 +32,9 @@ public class ClientController : ControllerBase
            IgpDbContext ctx,
            IConfiguration iconfiguration,
            IJwtAuthManager jwtAuthManager,
-           IClientManager clientManager)
+           //IClientManager clientManager,
+           IServiceProviderManager serviceProviderManager
+           )
     {
         this._dbctx = ctx;
         this._iconfiguration = iconfiguration;
@@ -39,7 +42,7 @@ public class ClientController : ControllerBase
 
         _userManager = userManager;
         _roleManager = roleManager;
-        _clientManager = clientManager;
+        _serviceProviderManager = serviceProviderManager;
 
 
     }
@@ -69,42 +72,18 @@ public class ClientController : ControllerBase
 
 
 
-    // [HttpPost("Search")]
-    // //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles="Admin") ]
-    // public async Task<ActionResult<IdentityUser>> SearchByEmail( LoginDto auser)
-    // {
-
-    //     var user = await _jwtAuthManager.FindIgpUser(auser, _userManager);
-    //     if (user != null)
-    //     {
-    //         return Ok(user);
-    //     }
-
-    //     return BadRequest("User Not Found");
-    // }
 
 
 
-    [HttpPost("RegisterUser")]
+    [HttpPost("RegisterProvider")]
     // This must take in several data not just AUSER model
-    public async Task<IActionResult> RegisterUser([FromForm] ClientRegisterDto model)
+    public async Task<IActionResult> RegisterProvider([FromForm] ProviderRegisterDto model)
     {
 
-        return new OkObjectResult(await _clientManager.RegisterClient(model));
+        return new OkObjectResult(await _serviceProviderManager.RegisterProvider(model));
     }
 
 
- 
-
-    [HttpGet("SampleGetDistanceBtwPoints")]
-    // This must take in several data not just AUSER model
-    public async Task<IActionResult> GetDistance()
-    {
-        var x = _dbctx.Clients.Where(i => i.email == "Akomspatrick7@yahoo.com").First().Location;
-        var y = _dbctx.Clients.Where(i => i.email == "Akomspatrick8@yahoo.com").First().Location;
-        var distanceInMeters = CalculateDistance.getdistance(x, y);
-        return Ok(distanceInMeters);
-    }
 
 
 }

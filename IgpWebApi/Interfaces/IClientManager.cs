@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 public interface IClientManager{
 
-    Task<Client> Find(ClientRegisterDto user );
-    Task<Client> Create(ClientRegisterDto user );
+    Task<Client> FindAsync(ClientRegisterDto user );
+    Task<Client> CreateAsync(ClientRegisterDto user );
     Task<CustomReturnType> RegisterClient(ClientRegisterDto model);
 }

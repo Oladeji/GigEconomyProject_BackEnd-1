@@ -1,6 +1,6 @@
 using NetTopologySuite.Geometries;
 
-public class ClientRegisterDto: ILoginDto
+public class ClientRegisterDto//: ILoginDto
 
 {
     public string Email { get; set; }

@@ -39,24 +39,24 @@ public class TokenController : ControllerBase
     }
 
 
-    [HttpPost("Authenticate")]
-    public async  Task<ActionResult<int>> Authenticate([FromBody ]ClientRegisterDto user)
-    {
-       var loggedinuser = await  _jwtAuthManager.FindIgpUser( user,  _userManager);
-            if (loggedinuser !=null)
-            {
-               var result=  await _jwtAuthManager.GenerateToken(loggedinuser);
-                if( result !=null)  
-                {
-                    return Ok(result); 
-                }
-            }
-          return NotFound("User Not Found");
+    // [HttpPost("Authenticate")]
+    // public async  Task<ActionResult<int>> Authenticate([FromBody ]ClientRegisterDto user)
+    // {
+    //    var loggedinuser = await  _jwtAuthManager.FindIgpUser( user,  _userManager);
+    //         if (loggedinuser !=null)
+    //         {
+    //            var result=  await _jwtAuthManager.GenerateToken(loggedinuser);
+    //             if( result !=null)  
+    //             {
+    //                 return Ok(result); 
+    //             }
+    //         }
+    //       return NotFound("User Not Found");
       
-     }
+    //  }
 
     [HttpPost("Login")]
-    public async  Task<ActionResult<int>> Login([FromBody ] ILoginDto user)
+    public async  Task<ActionResult<int>> Login([FromBody ] LoginDto user)
     {
        var loggedinuser = await  _jwtAuthManager.FindIgpUser( user,  _userManager);
             if (loggedinuser !=null)
@@ -76,6 +76,22 @@ public class TokenController : ControllerBase
           return NotFound("User Not Found");
       
      }
+
+
+    [HttpPost("SearchUserByEmail")]
+    //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles="Admin") ]
+    public async Task<ActionResult<IdentityUser>> SearchByEmail( LoginDto auser)
+    {
+
+        var user = await _jwtAuthManager.FindIgpUser(auser, _userManager);
+        if (user != null)
+        {
+            return Ok(user);
+        }
+
+        return BadRequest("User Not Found");
+    }
+
 
 
 

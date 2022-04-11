@@ -2,7 +2,7 @@ using IgpDAL;
 
 public interface IServiceProviderManager{
 
-    Task<Client> Find(ProviderRegisterDto user );
-    Task<Client> Create(ProviderRegisterDto user );
-    Task<CustomReturnType> RegisterClient(ProviderRegisterDto model);
+    Task<IgpDAL.ServiceProvider> FindAsync(ProviderRegisterDto user );
+    Task<IgpDAL.ServiceProvider> CreateAsync(ProviderRegisterDto user );
+    Task<CustomReturnType> RegisterProvider(ProviderRegisterDto model);
 }

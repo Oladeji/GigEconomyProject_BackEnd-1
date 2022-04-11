@@ -64,7 +64,8 @@ public class JobBoardController : ControllerBase
     }
 
     [HttpPost("Create")]
-    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme) ]
+
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
     public   async  Task<IActionResult>  Create([FromBody] AJob job)
     {
         var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
@@ -81,6 +82,8 @@ public class JobBoardController : ControllerBase
 
 
     [HttpDelete()]
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
+
     public   async  Task<IActionResult>  Delete(string email)
     {
         var user =   _dbctx.Clients.Where( i => i.email==email);
@@ -93,4 +96,28 @@ public class JobBoardController : ControllerBase
 
        return Ok("User Does Not Exist");
     }
+
+
+
+
+  [HttpGet("IamClient")]
+
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
+    public   async  Task<IActionResult>  IamClient()
+    {
+
+
+       return Ok("Client");
+    }
+
+  [HttpGet("IamProvider")]
+
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.ServiceProvider) ]
+    public   async  Task<IActionResult>  IamProvider()
+    {
+
+
+       return Ok("Provider");
+    }
+
 }

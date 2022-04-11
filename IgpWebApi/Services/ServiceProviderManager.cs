@@ -1,22 +1,16 @@
-
-
 using IgpDAL;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-public class Clientmanager : IClientManager
+public class ServiceProviderManager : IServiceProviderManager
 {
 
- // , IgpDbContext dbctx, UserManager<IgpUser> _userManager, IJwtAuthManager _jwtAuthManager)
- 
-
+    private readonly IgpDbContext _dbctx;
     private readonly UserManager<IgpUser> _userManager;
-     private readonly IgpDbContext _dbctx;
-
     private readonly IJwtAuthManager _jwtAuthManager;
 
-	public Clientmanager(
+	public ServiceProviderManager(
             UserManager<IgpUser> userManager,
             IgpDbContext ctx,
             IJwtAuthManager jwtAuthManager
@@ -33,31 +27,35 @@ public class Clientmanager : IClientManager
 
 
 
-    public async Task<Client> CreateAsync(ClientRegisterDto user)
-    {
-        
-     var loc = new NetTopologySuite.Geometries.Point( user.Location.lonx, user.Location.laty) { SRID = 4326 };
-//new NetTopologySuite.Geometries.Point(1.536553, 49.823796) { SRID = 4326 }
-        try{
-        await _dbctx.Clients.AddAsync(new Client
-        {
-            email = user.Email,
-            Surname = user.Surname,
-            Firstname = user.Firstname,
-            Middlename= user.Middlename,
-            PhoneNo=user.PhoneNo,
-            PostCode=user.PostCode,
-            HouseNo= user.HouseNo,
-            Address=user.Address,
-            City=user.City,
-            Country=user.Country,
-            ImageUrl=user.ImageUrl,
-            Location=   loc
-           //  
-                            
-        });
 
-            
+    public async Task<IgpDAL.ServiceProvider> CreateAsync(ProviderRegisterDto user)
+    {
+        try 
+        {
+         var loc = new NetTopologySuite.Geometries.Point( user.Location.lonx, user.Location.laty) { SRID = 4326 };
+        await _dbctx.ServiceProviders.AddAsync(new IgpDAL.ServiceProvider
+        {
+            Surname = user.Surname,
+            Middlename = user.Middlename,
+            Firstname = user.Firstname,
+            Petname = user.Petname,
+            MissionStatement = user.MissionStatement,
+            Email = user.Email,
+            PhoneNo = user.PhoneNo,
+            AlternatePhoneNo = user.AlternatePhoneNo,
+            PostCode = user.PostCode,
+            HouseNo = user.HouseNo,
+            Address = user.Address,
+            City = user.City,
+            Country = user.Country,
+            ImageUrl=user.ImageUrl,
+            Location = loc
+
+
+        });
+        // await _dbctx.SaveChangesAsync();
+        // var  loggedinuser = await  _userManager.FindByEmailAsync(user.Email); //await FindAsync(user);
+        //      await _userManager.AddToRoleAsync(loggedinuser,UserRoles.ServiceProvider);
         await _dbctx.SaveChangesAsync();
         return    await FindAsync(user); ;
         }catch(Exception ex){
@@ -65,23 +63,18 @@ public class Clientmanager : IClientManager
 
         }
 
-
     }
 
-    public async Task<Client> FindAsync(ClientRegisterDto user)
+    public async Task<IgpDAL.ServiceProvider> FindAsync(ProviderRegisterDto user)
     {
-        var client = await _dbctx.Clients.Where(i => i.email == user.Email).FirstOrDefaultAsync();
+              var client = await _dbctx.ServiceProviders.Where(i => i.Email == user.Email).FirstOrDefaultAsync();
         return client;
     }
 
 
-
- //   public async Task<CustomReturnType> RegisterClient(IFormFile iformFileValue,  ClientRegisterDto model, IgpDbContext dbctx, UserManager<IgpUser> _userManager, IJwtAuthManager _jwtAuthManager)
-  public async Task<CustomReturnType> RegisterClient( ClientRegisterDto model )
-
- 
+    public async Task<CustomReturnType> RegisterProvider(ProviderRegisterDto model)
     {
-
+        
         var client = await FindAsync(model);
         if (client == null)
         {   model.ImageUrl= await FileHelper.UploadImage(model.Image );
@@ -92,7 +85,7 @@ public class Clientmanager : IClientManager
                 {
                     code = StatusCodes.Status500InternalServerError,
 
-                    message = "Problem Creating User"
+                    message = "Problem Creating Sevice Provider"
 
                 };
 
@@ -109,8 +102,8 @@ public class Clientmanager : IClientManager
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
             UserName = model.Email,
-            UserCode = client.ClientId,
-            Usertype = TypeOfUser.CLIENT
+            UserCode = client.ServiceProviderId,
+            Usertype = TypeOfUser.PROVIDER
 
 
         };
@@ -125,14 +118,10 @@ public class Clientmanager : IClientManager
             return new CustomReturnType
             {
                 code = StatusCodes.Status500InternalServerError,
-                message = error + "User creation failed! Please check user details and try again."
+                message = error + "Service Provider  failed! Please check Providers details and try again."
             };
         }
-   
-          // var  loggedinuser = await  _userManager.FindByEmailAsync(user.Email); //await FindAsync(user);
-          
-          //await _userManager.AddToRoleAsync(loggedinuser,UserRoles.Client);
-          await _userManager.AddToRoleAsync(user,UserRoles.Client);
+        await _userManager.AddToRoleAsync(user,UserRoles.ServiceProvider);
         var tokenresult = await _jwtAuthManager.GenerateToken(user);
         if (tokenresult == null) {throw new Exception(" Problem generation Token"); }
        
@@ -142,12 +131,9 @@ public class Clientmanager : IClientManager
         {
             code = StatusCodes.Status201Created,
             token=tokenresult,
-            message = "User created successfully!",
-            Usertype = TypeOfUser.CLIENT.ToString(),
+            message = "Provider created successfully,Please Provide Details!",
+            Usertype = TypeOfUser.PROVIDER.ToString(),
             Username = model.Email
         };
-
     }
-
-
 }

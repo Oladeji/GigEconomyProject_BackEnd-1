@@ -103,6 +103,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
     //builder.Services.AddSingleton<IJwtAuthManager>(new JwtAuthManager(builder.Configuration));
     builder.Services.AddScoped<IClientManager, Clientmanager>();
+    builder.Services.AddScoped<IServiceProviderManager, ServiceProviderManager>();
     builder.Services.AddScoped<IJobManager,JobManager>();
   
     builder.Services.AddEndpointsApiExplorer();

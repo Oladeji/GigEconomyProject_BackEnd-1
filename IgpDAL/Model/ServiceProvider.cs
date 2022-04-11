@@ -22,5 +22,8 @@ public class  ServiceProvider
   public string Country {set;get;}
 
 public Point Location { get; set; } 
+
+  public string ImageUrl  { get; set; } = string.Empty;
+
 }
 }

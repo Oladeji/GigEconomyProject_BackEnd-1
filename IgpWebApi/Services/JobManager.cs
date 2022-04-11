@@ -13,6 +13,8 @@ public class JobManager : IJobManager
     {
         await _dbctx.JobBoards.AddAsync(new JobBoard{
              JobDescription=job.JobDescription,
+             SkillTypeId = job.SkillTypeId,
+
              ClientId = user.ClientId
         });
 

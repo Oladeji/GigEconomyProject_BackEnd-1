@@ -32,6 +32,7 @@ public class JwtAuthManager :IJwtAuthManager
             if (loggedinuser != null )
             {
                 var userRoles = await _userManager.GetRolesAsync(loggedinuser);
+                //when creating this user , i should have added the roles if i want to use this
 
                 var authClaims = new List<Claim>
                 {
@@ -60,7 +61,7 @@ public class JwtAuthManager :IJwtAuthManager
             return  null;
     }
 
-  public async  Task<IgpUser> FindIgpUser(ILoginDto auser,    UserManager<IgpUser> _userManager)
+  public async  Task<IgpUser> FindIgpUser(LoginDto auser,    UserManager<IgpUser> _userManager)
   {
       
             var loggedinuser = await  _userManager.FindByEmailAsync(auser.Email);

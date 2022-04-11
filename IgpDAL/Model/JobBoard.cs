@@ -19,7 +19,9 @@ public class JobBoard
   public Client? Client {get;set;}
 
 
-  public SkillType? SkillType { get; set; }  
+  public int SkillTypeId { get; set; } 
+  
+ // public  string?  Description {set;get;} 
 
 }
 }
