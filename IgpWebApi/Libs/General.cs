@@ -6,7 +6,7 @@ public static class General
     
     public static  Client GetCurrentUser(ClaimsIdentity identity)
         { 
-            if (identity != null)
+            if (identity.IsAuthenticated != null)
             {
                 var userClaims = identity.Claims;
                 //var allid= userClaims.Where(c =>c.Type=="CODE").ToList();

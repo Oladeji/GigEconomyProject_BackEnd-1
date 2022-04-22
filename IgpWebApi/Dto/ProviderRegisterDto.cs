@@ -19,7 +19,7 @@ public class ProviderRegisterDto
     public string ImageUrl { get; set; } = string.Empty;
     public string Password { get; set; }
 
-    public IFormFile Image { get; set; }
+    public string Image { get; set; }
 
     public GeolocationDto Location { get; set; }
 

@@ -63,22 +63,29 @@ public class JobBoardController : ControllerBase
         return NotFound("Job Not Found with Id");
     }
 
-    [HttpPost("Create")]
 
-    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
-    public   async  Task<IActionResult>  Create([FromBody] AJob job)
+   [HttpPost("Create")]
+   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
+    public   async  Task<IActionResult>  Create([FromBody] JobDto job)
     {
-        var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
-        var jb= await  _jobManager.Create(currentuser,job);
-                if (jb == -1)
-                {
-           
-                    return StatusCode(StatusCodes.Status500InternalServerError,"Problem Creating User" );
+      
                 
-                }
+            var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
 
-       return Ok("Job Created On JobBoard");
+                var jb= await  _jobManager.Create(currentuser,job);
+                 if (jb == -1)
+                 {
+           
+                     return StatusCode(StatusCodes.Status500InternalServerError,"Problem Creating User" );
+                
+                 }
+             
+                  
+
+              return new OkObjectResult(new CustomReturnType{ message="Job Successfully Placed  On JobBoard"});
     }
+
+
 
 
     [HttpDelete()]
@@ -121,3 +128,8 @@ public class JobBoardController : ControllerBase
     }
 
 }
+
+
+
+
+   

@@ -1,0 +1,29 @@
+{
+  "email": "11",
+  "password": "1",
+  "surname": "1",
+  "middlename": "1",
+  "firstname": "1",
+  "phoneNo": "1",
+  "postCode": "1",
+  "houseNo": "1",
+  "address": "1",
+  "city": "1",
+  "country": "1",
+  "image": "1",
+  "imageUrl": "1",
+  "location": {
+    "lonx": 1,
+    "laty": 1
+  }
+}
+{"Email":"Akomspatrick@yahoo.com",
+"Password":"1",
+"Surname":"Akoms",
+"Middlename":"1",
+"Firstname":"sss",
+"PhoneNo":"1",
+"PostCode":"1",
+"HouseNo":"1",
+"Address":"1",
+"City":"1","Country":"1","Image":"1","ImageUrl":"1","Location.lonx":7777,"Location.laty":1234}

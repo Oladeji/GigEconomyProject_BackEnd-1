@@ -21,7 +21,8 @@ public class JobBoard
 
   public int SkillTypeId { get; set; } 
   
- // public  string?  Description {set;get;} 
+  public string ImageUrl  { get; set; }
+  public Point Location { get; set; } 
 
 }
 }

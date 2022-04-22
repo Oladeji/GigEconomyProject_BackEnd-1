@@ -110,7 +110,12 @@ public class Clientmanager : IClientManager
             SecurityStamp = Guid.NewGuid().ToString(),
             UserName = model.Email,
             UserCode = client.ClientId,
-            Usertype = TypeOfUser.CLIENT
+            Usertype = TypeOfUser.CLIENT,
+            Client=client,
+            PhoneNumber=client.PhoneNo
+            
+            
+            
 
 
         };

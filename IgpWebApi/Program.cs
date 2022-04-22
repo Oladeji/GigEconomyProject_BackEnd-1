@@ -108,13 +108,14 @@ builder.Services.Configure<IdentityOptions>(options =>
   
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddCors();
 
 
 
     var app = builder.Build();
     // Configure the HTTP request pipeline.
-    app.UseAuthorization();
-    app.UseAuthentication();
+ //   app.UseAuthorization();
+    //app.UseAuthentication();
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
@@ -137,6 +138,7 @@ builder.Services.Configure<IdentityOptions>(options =>
        }
 }
 app.UseHttpsRedirection();
+app.UseCors(x=>x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

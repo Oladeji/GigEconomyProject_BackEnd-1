@@ -6,13 +6,13 @@ namespace IgpDAL
     {
         public static void Initialize(IgpDbContext ctx)
         {
-              ctx.Database.EnsureCreated();  
+            //  ctx.Database.EnsureCreated();  
              if (ctx.Clients.Any())
              {
                 
                  return;
              }
-            // else  ctx.Database.EnsureCreated();
+            else  ctx.Database.EnsureCreated();
 
             // var Songs = new List<Song>()
             // {

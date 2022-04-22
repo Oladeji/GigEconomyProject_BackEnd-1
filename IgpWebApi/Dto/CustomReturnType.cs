@@ -4,5 +4,6 @@ public class CustomReturnType{
     public string Username {get;set; }= string.Empty;
     public Tokens token { get; set; }
     public string Usertype { get; set; }= string.Empty;
+    public string ImageUrl { get; set; }= string.Empty;
 
 }

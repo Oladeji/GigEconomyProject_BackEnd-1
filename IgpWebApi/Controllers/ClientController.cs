@@ -87,9 +87,12 @@ public class ClientController : ControllerBase
 
     [HttpPost("RegisterUser")]
     // This must take in several data not just AUSER model
-    public async Task<IActionResult> RegisterUser([FromForm] ClientRegisterDto model)
+   // public async Task<IActionResult> RegisterUser([FromForm] ClientRegisterDto2 model)
+  // public async Task<IActionResult> RegisterUser( ClientRegisterDto2 model)
+    public async Task<IActionResult> RegisterUser([FromBody] ClientRegisterDto model)
     {
-
+      
+     //  return Ok(model);
         return new OkObjectResult(await _clientManager.RegisterClient(model));
     }
 

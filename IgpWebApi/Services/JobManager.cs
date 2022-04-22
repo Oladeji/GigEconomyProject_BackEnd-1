@@ -9,17 +9,29 @@ public class JobManager : IJobManager
         _dbctx=dbctx;
     }
 
-    public async Task<int> Create(Client user, AJob job)
+    public async Task<int> Create(Client user, JobDto job)
     {
+        try{
+        //save image to get the image url
+        var loc = new NetTopologySuite.Geometries.Point( job.Location.lonx, job.Location.laty) { SRID = 4326 };
+
+         job.ImageUrl= await FileHelper.UploadImage(job.Image );
         await _dbctx.JobBoards.AddAsync(new JobBoard{
              JobDescription=job.JobDescription,
-             SkillTypeId = job.SkillTypeId,
-
+            SkillTypeId = job.SkillTypeId,
+            ImageUrl = job.ImageUrl,
+            Location =loc,
+            JobinitialBudget= job.JobinitialBudget,
+             
+//           
              ClientId = user.ClientId
         });
 
        return await _dbctx.SaveChangesAsync();
-
+        }catch(Exception ex)
+        {
+            throw ex;
+        }
         
     }
 

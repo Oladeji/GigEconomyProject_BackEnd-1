@@ -75,12 +75,12 @@ public class ServiceProviderManager : IServiceProviderManager
     public async Task<CustomReturnType> RegisterProvider(ProviderRegisterDto model)
     {
         
-        var client = await FindAsync(model);
-        if (client == null)
+        var serviceprovider = await FindAsync(model);
+        if (serviceprovider == null)
         {   model.ImageUrl= await FileHelper.UploadImage(model.Image );
             
-            client = await CreateAsync(model);
-            if (client == null)
+            serviceprovider = await CreateAsync(model);
+            if (serviceprovider == null)
                 return new CustomReturnType
                 {
                     code = StatusCodes.Status500InternalServerError,
@@ -102,8 +102,9 @@ public class ServiceProviderManager : IServiceProviderManager
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
             UserName = model.Email,
-            UserCode = client.ServiceProviderId,
-            Usertype = TypeOfUser.PROVIDER
+            UserCode = serviceprovider.ServiceProviderId,
+            Usertype = TypeOfUser.PROVIDER,
+            ServiceProvider=serviceprovider
 
 
         };

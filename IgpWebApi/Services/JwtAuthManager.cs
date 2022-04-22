@@ -37,7 +37,7 @@ public class JwtAuthManager :IJwtAuthManager
                 var authClaims = new List<Claim>
                 {
                    new Claim("CODE", loggedinuser.UserCode.ToString()),
-                   new Claim("NOTE", "i cant still add info from client or provider inside generatetoken"),
+                   new Claim("NOTE", "I cant still add info from client or provider inside generatetoken"),
                    new Claim( ClaimTypes.Email,loggedinuser.Email),
                   //  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                   
@@ -46,7 +46,8 @@ public class JwtAuthManager :IJwtAuthManager
                    // new Claim( ClaimTypes.PostalCode,loggedinuser.PostCode),
                   //  new Claim( ClaimTypes.PostalCode,loggedinuser.p),
                     new Claim( ClaimTypes.Role,loggedinuser.Role.ToString()),
-                    new Claim( "USERTYPE",loggedinuser.Usertype.ToString())
+                    new Claim( "USERTYPE",loggedinuser.Usertype.ToString()),
+                    new Claim( "EMAIL",loggedinuser.Email)
                 };
 
                 foreach (var userRole in userRoles)

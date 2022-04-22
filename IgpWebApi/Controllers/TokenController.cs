@@ -64,16 +64,23 @@ public class TokenController : ControllerBase
                var result=  await _jwtAuthManager.GenerateToken(loggedinuser);
                 if( result !=null)  
                 {
-                   return  Ok(  new CustomReturnType { 
+
+                   // var client = await FindAsync(model); 
+                    var theclient =  _dbctx.Clients.Where(i => i.email == loggedinuser.Email).First();
+                    if( theclient == null){NotFound("Client  Not Found - Register Again");}
+                    
+                                    return  Ok(  new CustomReturnType { 
                                 code = StatusCodes.Status200OK, 
                                 Usertype=loggedinuser.Usertype.ToString(),
                                 message = "User succesfully Login",
-                                token= result,Username=loggedinuser.Email });
+                                token= result,
+                                Username=theclient.Firstname,
+                                ImageUrl= theclient.ImageUrl });
 
                   //  return Ok(result); 
                 }
             }
-          return NotFound("User Not Found");
+          return NotFound("User Not Found- Register Again");
       
      }
 
