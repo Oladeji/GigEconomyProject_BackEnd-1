@@ -20,7 +20,15 @@ public class  ServiceProvider
   public string Address {set;get;}
   public string City {set;get;}
   public string Country {set;get;}
-
+  ///
+  // we have a dedicated service provide skillset that is supposed to 
+  //take care of skill , but due to time constraint
+  // I have to assume a provider will have only one skill set
+  // And Also A provide will have only one outlet so 
+  //service provider details is not implemented for now
+  ///
+  public int SkillTypeId { get; set; } 
+  
 public Point Location { get; set; } 
 
   public string ImageUrl  { get; set; } = string.Empty;

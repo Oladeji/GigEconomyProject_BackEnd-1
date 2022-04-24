@@ -65,8 +65,8 @@ public class TokenController : ControllerBase
                 if( result !=null)  
                 {
 
-                   // var client = await FindAsync(model); 
-                    var theclient =  _dbctx.Clients.Where(i => i.email == loggedinuser.Email).First();
+                   if (loggedinuser.Usertype==TypeOfUser.CLIENT ){
+                    var theclient =  _dbctx.Clients.Where(i => i.email == loggedinuser.Email).FirstOrDefault();
                     if( theclient == null){NotFound("Client  Not Found - Register Again");}
                     
                                     return  Ok(  new CustomReturnType { 
@@ -76,6 +76,20 @@ public class TokenController : ControllerBase
                                 token= result,
                                 Username=theclient.Firstname,
                                 ImageUrl= theclient.ImageUrl });
+                   }
+                   else
+                   if (loggedinuser.Usertype==TypeOfUser.PROVIDER ){
+                    var theclient =  _dbctx.ServiceProviders.Where(i => i.Email == loggedinuser.Email).FirstOrDefault();
+                    if( theclient == null){NotFound("Provider  Not Found - Register Again");}
+                    
+                                    return  Ok(  new CustomReturnType { 
+                                code = StatusCodes.Status200OK, 
+                                Usertype=loggedinuser.Usertype.ToString(),
+                                message = "User succesfully Login",
+                                token= result,
+                                Username=theclient.Firstname,
+                                ImageUrl= theclient.ImageUrl });
+                   }
 
                   //  return Ok(result); 
                 }

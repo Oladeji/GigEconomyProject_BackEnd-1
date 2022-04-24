@@ -77,7 +77,7 @@ public class ServiceProviderController : ControllerBase
 
     [HttpPost("RegisterProvider")]
     // This must take in several data not just AUSER model
-    public async Task<IActionResult> RegisterProvider([FromForm] ProviderRegisterDto model)
+    public async Task<IActionResult> RegisterProvider([FromBody] ProviderRegisterDto model)
     {
 
         return new OkObjectResult(await _serviceProviderManager.RegisterProvider(model));
