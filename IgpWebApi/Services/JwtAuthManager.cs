@@ -24,7 +24,7 @@ public class JwtAuthManager :IJwtAuthManager
 
 
    // public async Task<Tokens> GenerateToken(IgpUser loggedinuser,    UserManager<IgpUser> _userManager,RoleManager<IdentityRole> roleManager)
-       public async Task<Tokens> GenerateToken(IgpUser loggedinuser)//,    UserManager<IgpUser> _userManager)
+       public async Task<Tokens> GenerateToken(IgpUser loggedinuser,string tokenownerid, string SkillId)//,    UserManager<IgpUser> _userManager)
    
     {
            // var loggedinuser = await Find(auser, _userManager);
@@ -47,7 +47,9 @@ public class JwtAuthManager :IJwtAuthManager
                   //  new Claim( ClaimTypes.PostalCode,loggedinuser.p),
                     new Claim( ClaimTypes.Role,loggedinuser.Role.ToString()),
                     new Claim( "USERTYPE",loggedinuser.Usertype.ToString()),
-                    new Claim( "EMAIL",loggedinuser.Email)
+                    new Claim( "EMAIL",loggedinuser.Email),
+                    new Claim( "SKILLID",SkillId),
+                    new Claim( "TOKENOWNERID",tokenownerid)
                 };
 
                 foreach (var userRole in userRoles)

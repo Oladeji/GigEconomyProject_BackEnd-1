@@ -7,9 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IgpWebApi.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class JobBoardController : ControllerBase
+
+public class JobBoardController : XController
 {
      private readonly IgpDbContext _dbctx;
      private readonly IJobManager _jobManager;
@@ -19,27 +18,6 @@ public class JobBoardController : ControllerBase
         _jobManager= jobManager;
     }
 
-    // private Client GetCurrentUser()
-    //     {
-    //         var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-    //         if (identity != null)
-    //         {
-    //             var userClaims = identity.Claims;
-
-    //             return new Client
-    //             {
-                    
-    //                // UserCode = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.)?.Value,
-    //                 UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
-    //                 Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-    //                 PhoneNumber = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.MobilePhone)?.Value,
-    //                // Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
-    //                 Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
-    //             };
-    //         }
-    //         return null;
-    //     }
 
   
     [HttpGet("GetAll")]
@@ -70,9 +48,9 @@ public class JobBoardController : ControllerBase
     {
       
                 
-            var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
-
-                var jb= await  _jobManager.Create(currentuser,job);
+          //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
+              var ClientId =GetAClaim((ClaimsIdentity)User.Identity,"TOKENOWNERID");
+                var jb= await  _jobManager.Create(int.Parse(ClientId),job);
                  if (jb == -1)
                  {
            
@@ -85,6 +63,52 @@ public class JobBoardController : ControllerBase
               return new OkObjectResult(new CustomReturnType{ message="Job Successfully Placed  On JobBoard"});
     }
 
+   [HttpGet("ViewJobs")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
+   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.ServiceProvider) ]
+    public   async  Task<IActionResult>  ViewJobs()
+    {
+      
+                
+         //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
+           var SkillId= GetAClaim((ClaimsIdentity)User.Identity,"SKILLID");
+           var providerId =GetAClaim( (ClaimsIdentity)User.Identity,"TOKENOWNERID");
+         //  var provider = await _dbctx.ServiceProviders.FindAsync(providerId);
+           var provider =  _dbctx.ServiceProviders.Where(p=> p.ServiceProviderId==int.Parse(providerId)).FirstOrDefault();
+           var result =await  _jobManager.ViewJobsWithparticularSkillIdId(SkillId);
+
+           var finalresult = _jobManager.ChangeToDto2(provider.Location,result);
+       
+                
+           
+            return new OkObjectResult( finalresult);
+     }
+
+
+
+   [HttpGet("ViewProvidersThatShowedIntention")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
+   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
+    public   async  Task<IActionResult>  ViewProvidersThatShowedIntention()
+    {
+    // when a provider applies for a job on jobboard, it goes to intentionboard
+    // so now we just filter the intension board to
+    //1  select all intensions
+    // get the providers with this intensions and return them to the customer to pick one
+      // we need posted job id
+      // we now select all the job
+                
+         //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
+           var SkillId= GetAClaim((ClaimsIdentity)User.Identity,"SKILLID");
+           var providerId =GetAClaim( (ClaimsIdentity)User.Identity,"TOKENOWNERID");
+         //  var provider = await _dbctx.ServiceProviders.FindAsync(providerId);
+           var provider =  _dbctx.ServiceProviders.Where(p=> p.ServiceProviderId==int.Parse(providerId)).FirstOrDefault();
+           var result =await  _jobManager.ViewJobsWithparticularSkillIdId(SkillId);
+
+           var finalresult = _jobManager.ChangeToDto2(provider.Location,result);
+       
+                
+           
+            return new OkObjectResult( finalresult);
+     }
 
 
 

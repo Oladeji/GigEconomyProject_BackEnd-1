@@ -105,7 +105,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     builder.Services.AddScoped<IClientManager, Clientmanager>();
     builder.Services.AddScoped<IServiceProviderManager, ServiceProviderManager>();
     builder.Services.AddScoped<IJobManager,JobManager>();
-  
+    builder.Services.AddScoped<IIntentionBoardManager,IntentionBoardManager>();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddCors();

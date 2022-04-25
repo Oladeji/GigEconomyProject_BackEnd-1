@@ -11,9 +11,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IgpWebApi.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class ClientController : ControllerBase
+
+public class ClientController : XController
 {
 
     private readonly IgpDbContext _dbctx;
@@ -45,54 +44,12 @@ public class ClientController : ControllerBase
     }
 
 
-    private IgpUser GetCurrentUser()
-    {
-        var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-        if (identity != null)
-        {
-            var userClaims = identity.Claims;
-
-            return new IgpUser
-            {
-                UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
-                Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                PhoneNumber = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.MobilePhone)?.Value,
-                //Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
-                //Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
-            };
-        }
-        return null;
-    }
-
-
-
-
-
-    // [HttpPost("Search")]
-    // //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles="Admin") ]
-    // public async Task<ActionResult<IdentityUser>> SearchByEmail( LoginDto auser)
-    // {
-
-    //     var user = await _jwtAuthManager.FindIgpUser(auser, _userManager);
-    //     if (user != null)
-    //     {
-    //         return Ok(user);
-    //     }
-
-    //     return BadRequest("User Not Found");
-    // }
-
 
 
     [HttpPost("RegisterUser")]
-    // This must take in several data not just AUSER model
-   // public async Task<IActionResult> RegisterUser([FromForm] ClientRegisterDto2 model)
-  // public async Task<IActionResult> RegisterUser( ClientRegisterDto2 model)
     public async Task<IActionResult> RegisterUser([FromBody] ClientRegisterDto model)
     {
-      
-     //  return Ok(model);
+
         return new OkObjectResult(await _clientManager.RegisterClient(model));
     }
 

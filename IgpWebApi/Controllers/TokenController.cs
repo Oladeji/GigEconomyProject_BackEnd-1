@@ -11,9 +11,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IgpWebApi.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class TokenController : ControllerBase
+
+public class TokenController : XController
 {
  
     private readonly IgpDbContext _dbctx;
@@ -61,28 +60,31 @@ public class TokenController : ControllerBase
        var loggedinuser = await  _jwtAuthManager.FindIgpUser( user,  _userManager);
             if (loggedinuser !=null)
             {
-               var result=  await _jwtAuthManager.GenerateToken(loggedinuser);
-                if( result !=null)  
-                {
+              
+               // if( result !=null)  
+                
 
                    if (loggedinuser.Usertype==TypeOfUser.CLIENT ){
                     var theclient =  _dbctx.Clients.Where(i => i.email == loggedinuser.Email).FirstOrDefault();
                     if( theclient == null){NotFound("Client  Not Found - Register Again");}
-                    
-                                    return  Ok(  new CustomReturnType { 
-                                code = StatusCodes.Status200OK, 
-                                Usertype=loggedinuser.Usertype.ToString(),
-                                message = "User succesfully Login",
-                                token= result,
-                                Username=theclient.Firstname,
-                                ImageUrl= theclient.ImageUrl });
+
+                    var result=  await _jwtAuthManager.GenerateToken(loggedinuser,theclient.ClientId.ToString(),"CUSTOMER");
+                                return  Ok(  new CustomReturnType { 
+                                    code = StatusCodes.Status200OK, 
+                                    Usertype=loggedinuser.Usertype.ToString(),
+                                    message = "User succesfully Login",
+                                    token= result,
+                                    Username=theclient.Firstname,
+                                    ImageUrl= theclient.ImageUrl });
                    }
                    else
                    if (loggedinuser.Usertype==TypeOfUser.PROVIDER ){
                     var theclient =  _dbctx.ServiceProviders.Where(i => i.Email == loggedinuser.Email).FirstOrDefault();
                     if( theclient == null){NotFound("Provider  Not Found - Register Again");}
-                    
-                                    return  Ok(  new CustomReturnType { 
+
+                    var result=  await _jwtAuthManager.GenerateToken(loggedinuser,theclient.ServiceProviderId.ToString() , theclient.SkillTypeId.ToString());
+                                   
+                                return  Ok(  new CustomReturnType { 
                                 code = StatusCodes.Status200OK, 
                                 Usertype=loggedinuser.Usertype.ToString(),
                                 message = "User succesfully Login",
@@ -92,7 +94,7 @@ public class TokenController : ControllerBase
                    }
 
                   //  return Ok(result); 
-                }
+                
             }
           return NotFound("User Not Found- Register Again");
       

@@ -20,7 +20,7 @@ public class ProviderRegisterDto
     public string Password { get; set; }
 
     public string Image { get; set; }
-
+   public int SkillTypeId { get; set; } 
     public GeolocationDto Location { get; set; }
 
 
@@ -28,3 +28,4 @@ public class ProviderRegisterDto
 
 
 }
+

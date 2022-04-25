@@ -138,7 +138,7 @@ public class Clientmanager : IClientManager
           
           //await _userManager.AddToRoleAsync(loggedinuser,UserRoles.Client);
           await _userManager.AddToRoleAsync(user,UserRoles.Client);
-        var tokenresult = await _jwtAuthManager.GenerateToken(user);
+        var tokenresult = await _jwtAuthManager.GenerateToken(user,client.ClientId.ToString(), "");
         if (tokenresult == null) {throw new Exception(" Problem generation Token"); }
        
             
@@ -149,7 +149,8 @@ public class Clientmanager : IClientManager
             token=tokenresult,
             message = "User created successfully!",
             Usertype = TypeOfUser.CLIENT.ToString(),
-            Username = model.Email
+            Username = model.Email,
+            ImageUrl= model.ImageUrl
         };
 
     }

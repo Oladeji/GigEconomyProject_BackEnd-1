@@ -30,6 +30,8 @@ public JobState  State{get;set;}= JobState.New;
         InProgress, 
         Completed_Paid, 
         Completed_NotYetPaid,
-        New
+       
+        New,
+ Assigned,
     };
 }

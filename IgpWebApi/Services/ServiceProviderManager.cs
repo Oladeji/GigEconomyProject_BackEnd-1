@@ -49,7 +49,8 @@ public class ServiceProviderManager : IServiceProviderManager
             City = user.City,
             Country = user.Country,
             ImageUrl=user.ImageUrl,
-            Location = loc
+            Location = loc,
+            SkillTypeId= user.SkillTypeId
 
 
         });
@@ -123,7 +124,7 @@ public class ServiceProviderManager : IServiceProviderManager
             };
         }
         await _userManager.AddToRoleAsync(user,UserRoles.ServiceProvider);
-        var tokenresult = await _jwtAuthManager.GenerateToken(user);
+        var tokenresult = await _jwtAuthManager.GenerateToken(user,serviceprovider.ServiceProviderId.ToString(),serviceprovider.SkillTypeId.ToString());
         if (tokenresult == null) {throw new Exception(" Problem generation Token"); }
        
             
@@ -134,7 +135,9 @@ public class ServiceProviderManager : IServiceProviderManager
             token=tokenresult,
             message = "Provider created successfully,Please Provide Details!",
             Usertype = TypeOfUser.PROVIDER.ToString(),
-            Username = model.Email
+            Username = model.Email,
+             ImageUrl= model.ImageUrl
         };
     }
 }
+                                

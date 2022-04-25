@@ -8,9 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IgpWebApi.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class SkillTypeController : ControllerBase
+
+public class SkillTypeController :XController
 {
      private readonly IgpDbContext _dbctx;
      private readonly ISkillTypeManager _skillTypeManager;

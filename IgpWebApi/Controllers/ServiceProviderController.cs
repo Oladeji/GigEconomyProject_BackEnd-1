@@ -11,9 +11,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IgpWebApi.Controllers;
 
-[ApiController]
-[Route("[controller]")]
-public class ServiceProviderController : ControllerBase
+
+public class ServiceProviderController : XController
 {
 
     private readonly IgpDbContext _dbctx;
