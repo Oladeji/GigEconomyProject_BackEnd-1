@@ -1,5 +1,6 @@
 using IgpDAL;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 public class JobManager : IJobManager
 {
@@ -8,6 +9,7 @@ public class JobManager : IJobManager
     {
         _dbctx = dbctx;
     }
+
 
     public List<JobDto2> ChangeToDto2( NetTopologySuite.Geometries.Point location,List<JobBoard> result)
     {
@@ -90,7 +92,18 @@ public class JobManager : IJobManager
             await _dbctx.JobBoards.Where(u => (u.ClientId == user.ClientId) && (u.JobBoardId == job.JobBoardId)).FirstOrDefaultAsync();
         }
 
-        public async Task<List<JobBoard>> ViewJobsWithparticularSkillIdId(string SkillId)
+    public async  Task<List<JobBoard>> ViewJobsPostedbyAClient(string clientid)
+    {
+           
+            return
+                await _dbctx.JobBoards.Where(u =>
+                     (u.ClientId == int.Parse(clientid)) 
+                ).ToListAsync();
+
+        
+    }
+
+    public async Task<List<JobBoard>> ViewJobsWithparticularSkillIdId(string SkillId)
         {
             return
                 await _dbctx.JobBoards.Where(u =>
@@ -99,4 +112,5 @@ public class JobManager : IJobManager
                 ).ToListAsync();
 
         }
-    }
+
+}

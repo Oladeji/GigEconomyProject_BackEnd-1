@@ -63,16 +63,36 @@ public class JobBoardController : XController
               return new OkObjectResult(new CustomReturnType{ message="Job Successfully Placed  On JobBoard"});
     }
 
-   [HttpGet("ViewJobs")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
+   [HttpGet("ViewJobsWithClientId")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
+   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
+    public   async  Task<IActionResult>  ViewJobsWithClientId()
+    {
+      
+                
+         //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
+         //  var SkillId= GetAClaim((ClaimsIdentity)User.Identity,"SKILLID");
+           var clientid =GetAClaim( (ClaimsIdentity)User.Identity,"TOKENOWNERID");
+          // var theclient = await _dbctx.Clients.FindAsync(clientid);
+          var theclient =  _dbctx.Clients.Where(p=> p.ClientId==int.Parse(clientid)).FirstOrDefault();
+           var result =await  _jobManager.ViewJobsPostedbyAClient(clientid);
+
+         var finalresult = _jobManager.ChangeToDto2(theclient.Location,result);
+       
+                
+           
+            return new OkObjectResult( finalresult);
+     }
+
+   [HttpGet("ViewJobsWithSkillId")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.ServiceProvider) ]
-    public   async  Task<IActionResult>  ViewJobs()
+    public   async  Task<IActionResult>  ViewJobsWithSkillId()
     {
       
                 
          //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
            var SkillId= GetAClaim((ClaimsIdentity)User.Identity,"SKILLID");
            var providerId =GetAClaim( (ClaimsIdentity)User.Identity,"TOKENOWNERID");
-         //  var provider = await _dbctx.ServiceProviders.FindAsync(providerId);
+         //to get provider location
            var provider =  _dbctx.ServiceProviders.Where(p=> p.ServiceProviderId==int.Parse(providerId)).FirstOrDefault();
            var result =await  _jobManager.ViewJobsWithparticularSkillIdId(SkillId);
 
@@ -85,30 +105,7 @@ public class JobBoardController : XController
 
 
 
-   [HttpGet("ViewProvidersThatShowedIntention")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
-   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
-    public   async  Task<IActionResult>  ViewProvidersThatShowedIntention()
-    {
-    // when a provider applies for a job on jobboard, it goes to intentionboard
-    // so now we just filter the intension board to
-    //1  select all intensions
-    // get the providers with this intensions and return them to the customer to pick one
-      // we need posted job id
-      // we now select all the job
-                
-         //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
-           var SkillId= GetAClaim((ClaimsIdentity)User.Identity,"SKILLID");
-           var providerId =GetAClaim( (ClaimsIdentity)User.Identity,"TOKENOWNERID");
-         //  var provider = await _dbctx.ServiceProviders.FindAsync(providerId);
-           var provider =  _dbctx.ServiceProviders.Where(p=> p.ServiceProviderId==int.Parse(providerId)).FirstOrDefault();
-           var result =await  _jobManager.ViewJobsWithparticularSkillIdId(SkillId);
 
-           var finalresult = _jobManager.ChangeToDto2(provider.Location,result);
-       
-                
-           
-            return new OkObjectResult( finalresult);
-     }
 
 
 

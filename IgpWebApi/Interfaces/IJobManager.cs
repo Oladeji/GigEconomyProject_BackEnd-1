@@ -9,4 +9,5 @@ public interface IJobManager{
 
     Task<List<JobBoard>> ViewJobsWithparticularSkillIdId(string SkillId);
     List<JobDto2> ChangeToDto2(NetTopologySuite.Geometries.Point location, List<JobBoard> result);
+     Task<List<JobBoard>> ViewJobsPostedbyAClient(string clientid);
 }

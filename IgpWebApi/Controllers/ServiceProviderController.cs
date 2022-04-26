@@ -82,7 +82,32 @@ public class ServiceProviderController : XController
         return new OkObjectResult(await _serviceProviderManager.RegisterProvider(model));
     }
 
+   [HttpGet("ViewProvidersThatShowedIntention")]// service providers wants to check jobs that has their skill id on jobboard // they hve paid for
+   [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles =UserRoles.Client) ]
+    public   async  Task<IActionResult>  ViewProvidersThatShowedIntention()
+    {
+    // when a provider applies for a job on jobboard, it goes to intentionboard
+    // so now we just filter the intension board to
+    //1  select all intensions
+    // get the providers with this intensions and return them to the customer to pick one
+      // we need posted job id
+      // we now select all the job
+                
+         //  var currentuser=  General.GetCurrentUser((ClaimsIdentity)User.Identity);
+           //var SkillId= GetAClaim((ClaimsIdentity)User.Identity,"SKILLID");
 
+           var clientId =GetAClaim( (ClaimsIdentity)User.Identity,"TOKENOWNERID");
+           var theclient =  _dbctx.Clients.Where(p=> p.ClientId==int.Parse(clientId)).FirstOrDefault();
+         //  var provider = await _dbctx.ServiceProviders.FindAsync(providerId);
+          // var provider =  _dbctx.ServiceProviders.Where(p=> p.ServiceProviderId==int.Parse(providerId)).FirstOrDefault();
+           var result =await  _serviceProviderManager.ViewallProvidersthatShowedIntension4aCustomer(clientId);
+            var finalresult = _serviceProviderManager.ChangeToProviderRegisterDto2(theclient.Location,result);
+           return new OkObjectResult(finalresult);
+        
+       
+                
+           
+     }
 
 
 }

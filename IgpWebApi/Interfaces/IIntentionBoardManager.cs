@@ -8,6 +8,6 @@ public interface IIntentionBoardManager{
 
     Task<int> Delete(int IntentionBoardId );
 
-   Task<List<IgpDAL.ServiceProvider>> ViewIntentionsForAJob(int  JobId);
+   
   //  List<JobDto2> ChangeToDto2(NetTopologySuite.Geometries.Point location, List<JobBoard> result);
 }

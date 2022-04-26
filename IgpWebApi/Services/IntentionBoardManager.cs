@@ -48,19 +48,5 @@ public class IntentionBoardManager : IIntentionBoardManager
         throw new NotImplementedException();
     }
 
-    public async Task<List<IgpDAL.ServiceProvider>> ViewIntentionsForAJob(int JobId)
-    {
-        var Allintention= await _dbctx.IntentionBoards.Where(p=>p.JobId==JobId).ToListAsync();
-        var listofprovider = new List<IgpDAL.ServiceProvider>();
 
-        foreach(var intension in Allintention)
-        {
-           var prov = await _dbctx.ServiceProviders.Where(a=>a.ServiceProviderId== intension.ProviderId).ToListAsync();
-           if (prov!=null)
-           {
-             listofprovider.AddRange(prov);
-           }
-        }
-        return listofprovider;
-    }
 }
